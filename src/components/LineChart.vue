@@ -39,7 +39,8 @@ export default {
           data: chartData,
           options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
+            aspectRatio: 1,
         },
         });
       } 
