@@ -1,11 +1,11 @@
 <template>
   <div>
-    <canvas id="myChart"></canvas>
+    <canvas ref="chartCanvas"></canvas>
   </div>
 </template>
 
 <script>
-import { ref, onMounted, watchEffect } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import Chart from 'chart.js/auto';
 
 export default {
@@ -14,27 +14,29 @@ export default {
     data: Array,
   },
   setup(props) {
-    let chartInstance = null;
-    const chartRef = ref(null);
+    const chartInstance = ref(null); 
+    const chartCanvas = ref(null);
 
     const drawChart = () => {
-      const ctx = chartRef.value.getContext('2d');
+      if (!chartCanvas.value) return;
+
+      const ctx = chartCanvas.value.getContext('2d');
       const chartData = {
-        labels: props.data?.map(item => item.date).reverse(),
+        labels: props?.data?.map(item => item.date).reverse(),
         datasets: [{
-          label: 'Price',
-          data: props.data?.map(item => item.value).reverse(),
+          label: 'Price ($)',
+          data: props?.data?.map(item => item.value).reverse(),
           fill: true,
-          borderColor: 'rgb(75, 192, 192)',
+          borderColor: '#0dcaf0',
           tension: 0.1
         }]
       };
 
-      if (chartInstance) {
-        chartInstance.data = chartData;
-        chartInstance.update();
+      if (chartInstance.value) {
+        chartInstance.value.data = chartData;
+        chartInstance.value.update();
       } else {
-          chartInstance = new Chart(ctx, {
+          chartInstance.value = new Chart(ctx, {
           type: 'line',
           data: chartData,
           options: {
@@ -47,17 +49,16 @@ export default {
     };
 
     onMounted(() => {
-      chartRef.value = document.getElementById('myChart');
       drawChart();
     });
 
-    watchEffect(() => {
-      if (chartRef.value && props.data?.length) {
-        drawChart();
-      }
+     watch(() => props.data, () => {
+      drawChart();
     });
 
-    return {};
+    return {
+      chartCanvas
+    };
   }
 };
 </script>
