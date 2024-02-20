@@ -1,85 +1,62 @@
 <template>
-  <div class="lineChart">
+  <div>
     <canvas id="myChart"></canvas>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watchEffect } from 'vue';
 import Chart from 'chart.js/auto';
-
-let stockMarketHistoryDates = [];
-let stockMarketHistoryPrices = [];
-
 
 export default {
   name: 'LineChart',
-  setup() {
-    let chartInstance = null; 
-    const stockSymbol = ref('IBM');
-    const datePeriod = ref('daily');
-    
-    const API_URL = ref(`http://localhost:8080/v1/stocks/${datePeriod.value}/${stockSymbol.value}`);
+  props: {
+    data: Array,
+  },
+  setup(props) {
+    let chartInstance = null;
+    const chartRef = ref(null);
 
-    const updateStockChart = () => {
-      const ctx = document.getElementById('myChart').getContext('2d');
-      const data = {
-        labels: stockMarketHistoryDates,
-        datasets: [
-          {
-            label: 'Price',
-            data: stockMarketHistoryPrices,
-            fill: true,
-            borderColor: 'rgb(75, 192, 192)',
-            tension: 0.1
-          }
-        ]
-      };
-
-      const options = {
-        responsive: true,
-        maintainAspectRatio: true,
+    const drawChart = () => {
+      const ctx = chartRef.value.getContext('2d');
+      const chartData = {
+        labels: props.data?.map(item => item.date).reverse(),
+        datasets: [{
+          label: 'Price',
+          data: props.data?.map(item => item.value).reverse(),
+          fill: true,
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1
+        }]
       };
 
       if (chartInstance) {
-        chartInstance.data = data;
+        chartInstance.data = chartData;
         chartInstance.update();
       } else {
-        chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: data,
-        options: options
+          chartInstance = new Chart(ctx, {
+          type: 'line',
+          data: chartData,
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+        },
         });
       } 
     };
 
-    const fetchStockData = () => {
-      axios.get(API_URL.value).then(res => {
-
-        res.data.forEach(r => {
-          stockMarketHistoryDates.unshift(r.date);
-          stockMarketHistoryPrices.unshift(r.value);
-        });
-        updateStockChart();
-      }).catch(error => {
-        console.error("Error fetching stock data:", error);
-      });
-    };
-
     onMounted(() => {
-      fetchStockData();
-      updateStockChart();
+      chartRef.value = document.getElementById('myChart');
+      drawChart();
     });
 
-    return {
-      updateStockChart,
-      fetchStockData
-    };
+    watchEffect(() => {
+      if (chartRef.value && props.data?.length) {
+        drawChart();
+      }
+    });
+
+    return {};
   }
-}
+};
 </script>
-
-<style scoped>
-
-</style>
