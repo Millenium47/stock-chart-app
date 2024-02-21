@@ -54,7 +54,7 @@ export default {
       { label: "Tesla", value: "TSLA" },
       { label: "Amazon", value: "AMZN" },
       { label: "Google", value: "GOOGL" },
-      { label: "Facebook", value: "FB" },
+      { label: "Meta", value: "META" },
       { label: "NVIDIA Corporation", value: "NVDA" },
       { label: "Intel Corporation", value: "INTC" },
     ]);
