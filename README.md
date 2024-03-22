@@ -1,24 +1,10 @@
-# stock-chart-app
+# Simple Vue applicaton to display stock prices
 
-## Project setup
-```
-npm install
-```
+## Overview
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+This project is a really simple Vue application developed as part of an interview task. Its primary function is to fetch time series data, specifically stock prices and display them in a chart.
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## Preview
+![image](https://github.com/Millenium47/stock-chart-app/assets/17088629/5b7bab4f-b65a-49de-8828-d4eca3b1c5ea)
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+![image](https://github.com/Millenium47/stock-chart-app/assets/17088629/20c2315f-6646-4848-ae96-b8ee22c2ba2c)
